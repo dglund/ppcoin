@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 from uuid import uuid4
 
 import requests
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 
 
 class Blockchain:
@@ -219,6 +219,11 @@ def mine():
     return jsonify(response), 200
 
 
+@app.route('/transactions', methods=['GET'])
+def render_transactions():
+    return render_template('transactions.html')
+
+
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
     values = request.get_json()
@@ -236,12 +241,21 @@ def new_transaction():
 
 
 @app.route('/chain', methods=['GET'])
+def render_chain():
+    return render_template('explorer.html')
+
+
 def full_chain():
     response = {
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
     }
     return jsonify(response), 200
+
+
+@app.route('/nodes')
+def render_nodes():
+    return render_template('nodes.html')
 
 
 @app.route('/nodes/register', methods=['POST'])
@@ -280,6 +294,11 @@ def consensus():
     return jsonify(response), 200
 
 
+@app.route('/')
+def render_home():
+    return render_template('home.html')
+
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
@@ -288,4 +307,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     port = args.port
 
-    app.run(host='127.0.0.1', port=port)
+    app.run(host='127.0.0.1', port=port, debug=True)
