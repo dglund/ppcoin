@@ -3,5 +3,11 @@
 {{ super() }}
 {% endblock %}
 {% block content %}
-    Transactions
+    Create Transaction
+
+    <form method="POST">
+        Recipient wallet: <input type="text" name="recipient" value=""><br>
+        Amount: <input type="text" name="amount" value=""><br>
+        <input type="submit" class="submit" value="Submit">
+    </form>
 {% endblock %}

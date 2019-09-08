@@ -3,6 +3,7 @@ import json
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
+from pygit2 import Repository
 
 import requests
 from flask import Flask, jsonify, request, render_template
@@ -189,6 +190,11 @@ node_identifier = str(uuid4()).replace('-', '')
 
 # Instantiate the Blockchain
 blockchain = Blockchain()
+
+
+@app.context_processor  # Passes Git branch name to all templates for layout reasons
+def inject_version():
+    return dict(version=Repository('.').head.shorthand)
 
 
 @app.route('/mine', methods=['GET'])
