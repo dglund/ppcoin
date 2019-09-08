@@ -7,21 +7,21 @@ body {
     margin: auto;
     background-color: #8f8f8f;
     padding: 5px;
-    width: 600px;
+    width: 650px;
 }
 #header {
     background-color: #355c82;
     padding: 8px;
 }
 .container {
-    width: 600px;
+    width: 650px;
     margin: auto;
     background-color: #8f8f8f;
 }
 #first {
-    width: 600px;
+    width: 650px;
     float: left;
-    height: 300px;
+    min-height: 300px;
     background-color: #435a70;
 }
 #second {
@@ -58,7 +58,7 @@ body {
     margin: auto;
     background-color: #58616b;
     padding: 5px;
-    width: 600px;
+    width: 650px;
     color: white;
     font-size: 10px;
     text-align: right;

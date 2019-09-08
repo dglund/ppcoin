@@ -6,7 +6,7 @@ from uuid import uuid4
 from pygit2 import Repository
 
 import requests
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, make_response
 
 
 class Blockchain:
@@ -248,16 +248,13 @@ def new_transaction():
 
 @app.route('/chain', methods=['GET'])
 def render_chain():
-    return render_template('explorer.html')
 
-
-def full_chain():
     response = {
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
     }
-    return jsonify(response), 200
-
+    pretty = json.dumps(response, sort_keys=False, indent=2)
+    return render_template('explorer.html', value=pretty)
 
 @app.route('/nodes')
 def render_nodes():
