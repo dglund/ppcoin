@@ -7,6 +7,7 @@ https://github.com/dvf/blockchain
 
 #### ToDo:
 
-* 
-* 
-* 
+* Create Mine-button
+* Create transactions in template
+* Resolve conflicts
+* Add nodes

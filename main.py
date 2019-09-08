@@ -6,7 +6,7 @@ from uuid import uuid4
 from pygit2 import Repository
 
 import requests
-from flask import Flask, jsonify, request, render_template, make_response
+from flask import Flask, jsonify, request, render_template
 
 
 class Blockchain:
