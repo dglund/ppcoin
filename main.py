@@ -273,20 +273,16 @@ def render_nodes():
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
-    values = request.get_json()
+    node = str(request.form['node_ip'])
 
-    nodes = values.get('nodes')
-    if nodes is None:
-        return "Error: Please supply a valid list of nodes", 400
-
-    for node in nodes:
-        blockchain.register_node(node)
+    blockchain.register_node(node)
 
     response = {
         'message': 'New nodes have been added',
         'total_nodes': list(blockchain.nodes),
     }
-    return jsonify(response), 201
+    pretty = json.dumps(response, sort_keys=False, indent=2)
+    return render_template('response.html', response=pretty)
 
 
 @app.route('/nodes/resolve', methods=['GET'])

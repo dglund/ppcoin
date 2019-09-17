@@ -3,5 +3,12 @@
 {{ super() }}
 {% endblock %}
 {% block content %}
-    Nodes
+    <a href="/nodes/resolve" class="button">Resolve conflicts</a>
+
+    <br><br>
+    Add node:
+    <form action="/nodes/register" method="POST">
+        Node IP and port: <input type="text" name="node_ip" value=""><br>
+        <input type="submit" class="submit" value="Submit">
+    </form>
 {% endblock %}
