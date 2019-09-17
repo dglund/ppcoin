@@ -6,7 +6,7 @@ from uuid import uuid4
 from pygit2 import Repository
 
 import requests
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect, url_for
 
 
 class Blockchain:
@@ -225,14 +225,37 @@ def mine():
     return jsonify(response), 200
 
 
-@app.route('/transactions', methods=['GET'])
+@app.route('/transactions', methods=['GET', 'POST'])
 def render_transactions():
-    return render_template('transactions.html')
+    if request.method == 'POST':
+
+        transaction_data = {
+            'sender': node_identifier,
+            'recipient': request.form['recipient'],
+            'amount': int(request.form['amount'])
+        }
+        return redirect(url_for('new_transaction', transaction_data=transaction_data))
+    else:
+        return render_template('transactions.html')
 
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-    values = request.get_json()
+
+    transaction_data = {
+        'sender': node_identifier,
+        'recipient': request.form['recipient'],
+        'amount': int(request.form['amount'])
+    }
+
+    #json_data = eval(transaction_data)
+
+    values = transaction_data
+    #values = request.get_json()
+    print(values)
+
+    #return redirect('/transactions')
+
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
@@ -240,10 +263,10 @@ def new_transaction():
         return 'Missing values', 400
 
     # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
-
-    response = {'message': f'Transaction will be added to Block {index}'}
-    return jsonify(response), 201
+    blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    return redirect('/transactions')
+    #response = {'message': f'Transaction will be added to Block {index}'}
+    #return jsonify(response), 201
 
 
 @app.route('/chain', methods=['GET'])
