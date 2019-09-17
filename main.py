@@ -222,40 +222,24 @@ def mine():
         'proof': block['proof'],
         'previous_hash': block['previous_hash'],
     }
-    return jsonify(response), 200
+    pretty = json.dumps(response, sort_keys=False, indent=2)
+    return render_template('response.html', response=pretty)
 
 
-@app.route('/transactions', methods=['GET', 'POST'])
+@app.route('/transactions', methods=['GET'])
 def render_transactions():
-    if request.method == 'POST':
 
-        transaction_data = {
-            'sender': node_identifier,
-            'recipient': request.form['recipient'],
-            'amount': int(request.form['amount'])
-        }
-        return redirect(url_for('new_transaction', transaction_data=transaction_data))
-    else:
-        return render_template('transactions.html')
+    return render_template('transactions.html')
 
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
 
-    transaction_data = {
+    values = {
         'sender': node_identifier,
         'recipient': request.form['recipient'],
         'amount': int(request.form['amount'])
     }
-
-    #json_data = eval(transaction_data)
-
-    values = transaction_data
-    #values = request.get_json()
-    print(values)
-
-    #return redirect('/transactions')
-
 
     # Check that the required fields are in the POST'ed data
     required = ['sender', 'recipient', 'amount']
@@ -263,10 +247,11 @@ def new_transaction():
         return 'Missing values', 400
 
     # Create a new Transaction
-    blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
-    return redirect('/transactions')
-    #response = {'message': f'Transaction will be added to Block {index}'}
-    #return jsonify(response), 201
+    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+
+    response = 'Transaction will be added to Block ' + str(index)
+
+    return render_template('response.html', response=response)
 
 
 @app.route('/chain', methods=['GET'])
@@ -277,7 +262,9 @@ def render_chain():
         'length': len(blockchain.chain),
     }
     pretty = json.dumps(response, sort_keys=False, indent=2)
+
     return render_template('explorer.html', value=pretty)
+
 
 @app.route('/nodes')
 def render_nodes():
