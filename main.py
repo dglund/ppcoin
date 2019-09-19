@@ -70,8 +70,6 @@ class Blockchain:
         """
 
         neighbours = self.nodes
-
-
         new_chain = None
 
         # We're only looking for chains longer than ours
@@ -80,7 +78,6 @@ class Blockchain:
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
             response = requests.get(f'http://{node}/chain')
-            print(response.json())
 
             if response.status_code == 200:
                 length = response.json()['length']
@@ -200,8 +197,14 @@ def inject_version():
     return dict(version=Repository('.').head.shorthand)
 
 
+@app.route('/mining', methods=['GET'])
+def render_mining():
+    return render_template('mining.html')
+
+
 @app.route('/mine', methods=['GET'])
 def mine():
+    blockchain.resolve_conflicts()
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     proof = blockchain.proof_of_work(last_block)
@@ -268,6 +271,7 @@ def full_chain():
 
 @app.route('/explorer', methods=['GET'])
 def explorer():
+    blockchain.resolve_conflicts()
     response = {
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
@@ -291,7 +295,6 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     blockchain.register_node(node)
-    print(node)
     response = {
         'message': 'New nodes have been added',
         'total_nodes': list(blockchain.nodes),
