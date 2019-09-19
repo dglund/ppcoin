@@ -4,6 +4,7 @@ from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
 
+
 import requests
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 
@@ -69,8 +70,6 @@ class Blockchain:
         """
 
         neighbours = self.nodes
-
-        
         new_chain = None
 
         # We're only looking for chains longer than ours
@@ -79,8 +78,7 @@ class Blockchain:
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
             response = requests.get(f'http://{node}/chain')
-            print(response.json())
-            
+
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
@@ -96,6 +94,18 @@ class Blockchain:
             return True
 
         return False
+
+    def resolve_transactions(self):
+        neighbours = self.nodes
+        global_list = []
+        
+        for node in neighbours:
+            response = requests.get(f'http://{node}/transaction_list')
+            json_response = response.json()
+            for item in json_response:
+                global_list.append(item)
+
+        blockchain.current_transactions = global_list
         
     def new_block(self, proof, previous_hash):
         """
@@ -197,10 +207,12 @@ blockchain = Blockchain()
 @app.route('/mining', methods=['GET'])
 def render_mining():
     return render_template('mining.html')
-    
-    
+
+
 @app.route('/mine', methods=['GET'])
 def mine():
+    blockchain.resolve_conflicts()
+    blockchain.resolve_transactions()
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     proof = blockchain.proof_of_work(last_block)
@@ -230,8 +242,12 @@ def mine():
 
 @app.route('/transactions', methods=['GET'])
 def render_transactions():
+    replaced = blockchain.resolve_conflicts()
+    if replaced:
+        blockchain.current_transactions = []
 
-    return render_template('transactions.html')
+    list_transactions = blockchain.current_transactions
+    return render_template('transactions.html', context=list_transactions)
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -265,8 +281,16 @@ def full_chain():
     return jsonify(response), 200
 
 
+@app.route('/transaction_list', methods=['GET'])
+def pending_transactions():
+    response = blockchain.current_transactions
+
+    return jsonify(response), 200
+
+
 @app.route('/explorer', methods=['GET'])
 def explorer():
+    blockchain.resolve_conflicts()
     response = {
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
@@ -290,7 +314,6 @@ def register_nodes():
         return "Error: Please supply a valid list of nodes", 400
 
     blockchain.register_node(node)
-    print(node)
     response = {
         'message': 'New nodes have been added',
         'total_nodes': list(blockchain.nodes),

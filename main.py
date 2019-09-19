@@ -95,6 +95,18 @@ class Blockchain:
 
         return False
 
+    def resolve_transactions(self):
+        neighbours = self.nodes
+        global_list = []
+
+        for node in neighbours:
+            response = requests.get(f'http://{node}/transaction_list')
+            json_response = response.json()
+            for item in json_response:
+                global_list.append(item)
+
+        blockchain.current_transactions = global_list
+
     def new_block(self, proof, previous_hash):
         """
         Create a new Block in the Blockchain
@@ -205,6 +217,7 @@ def render_mining():
 @app.route('/mine', methods=['GET'])
 def mine():
     blockchain.resolve_conflicts()
+    blockchain.resolve_transactions()
     # We run the proof of work algorithm to get the next proof...
     last_block = blockchain.last_block
     proof = blockchain.proof_of_work(last_block)
@@ -234,8 +247,12 @@ def mine():
 
 @app.route('/transactions', methods=['GET'])
 def render_transactions():
+    replaced = blockchain.resolve_conflicts()
+    if replaced:
+        blockchain.current_transactions = []
 
-    return render_template('transactions.html')
+    list_transactions = blockchain.current_transactions
+    return render_template('transactions.html', context=list_transactions)
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -266,6 +283,13 @@ def full_chain():
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
     }
+    return jsonify(response), 200
+
+
+@app.route('/transaction_list', methods=['GET'])
+def pending_transactions():
+    response = blockchain.current_transactions
+
     return jsonify(response), 200
 
 
