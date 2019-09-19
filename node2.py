@@ -3,7 +3,6 @@ import json
 from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
-from pygit2 import Repository
 
 import requests
 from flask import Flask, jsonify, request, render_template, redirect, url_for
@@ -71,7 +70,7 @@ class Blockchain:
 
         neighbours = self.nodes
 
-
+        
         new_chain = None
 
         # We're only looking for chains longer than ours
@@ -81,7 +80,7 @@ class Blockchain:
         for node in neighbours:
             response = requests.get(f'http://{node}/chain')
             print(response.json())
-
+            
             if response.status_code == 200:
                 length = response.json()['length']
                 chain = response.json()['chain']
@@ -97,7 +96,7 @@ class Blockchain:
             return True
 
         return False
-
+        
     def new_block(self, proof, previous_hash):
         """
         Create a new Block in the Blockchain
@@ -193,11 +192,6 @@ node_identifier = str(uuid4()).replace('-', '')
 
 # Instantiate the Blockchain
 blockchain = Blockchain()
-
-
-@app.context_processor  # Passes Git branch name to all templates for layout reasons
-def inject_version():
-    return dict(version=Repository('.').head.shorthand)
 
 
 @app.route('/mine', methods=['GET'])
@@ -327,7 +321,7 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=5000, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=5001, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 
