@@ -252,7 +252,9 @@ def render_transactions():
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
-
+    replaced = blockchain.resolve_conflicts()
+    if replaced:
+        blockchain.current_transactions = []
     values = {
         'sender': node_identifier,
         'recipient': request.form['recipient'],
@@ -290,7 +292,9 @@ def pending_transactions():
 
 @app.route('/explorer', methods=['GET'])
 def explorer():
-    blockchain.resolve_conflicts()
+    replaced = blockchain.resolve_conflicts()
+    if replaced:
+        blockchain.current_transactions = []
     response = {
         'chain': blockchain.chain,
         'length': len(blockchain.chain),
