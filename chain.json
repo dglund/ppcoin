@@ -4,35 +4,9 @@
       "index": 1,
       "previous_hash": "1",
       "proof": 100,
-      "timestamp": 1569159402.9075625,
+      "timestamp": 1569166352.878666,
       "transactions": []
-    },
-    {
-      "index": 2,
-      "previous_hash": "4a93b5b5e000fec2c1b662fe4c043bbb275957a219c86d96b4ecdd8d9f1a0e3e",
-      "proof": 139694,
-      "timestamp": 1569159614.3513348,
-      "transactions": [
-        {
-          "amount": 1,
-          "recipient": "873c82c92f554f97a91f29a12f166e27",
-          "sender": "0"
-        }
-      ]
-    },
-    {
-      "index": 3,
-      "previous_hash": "2c372390a82475bb05079f75c90a742a3d09c7895833053ebc551533ad6f623f",
-      "proof": 83936,
-      "timestamp": 1569159637.3617477,
-      "transactions": [
-        {
-          "amount": 1,
-          "recipient": "b734cd2af60e4adf854f4433db83f5ca",
-          "sender": "0"
-        }
-      ]
     }
   ],
-  "length": 3
+  "length": 1
 }
