@@ -9,6 +9,16 @@ import requests
 from flask import Flask, jsonify, request, render_template, redirect, url_for
 
 
+def write_json(value):
+    chain_frame = {
+        'Blockchain': value,
+        'length': len(value),
+    }
+    dump = json.dumps(chain_frame, indent=2, sort_keys=True)
+    with open('chain.json', 'w') as f:
+        f.write(dump)
+
+
 class Blockchain:
     def __init__(self):
         self.current_transactions = []
@@ -17,6 +27,8 @@ class Blockchain:
 
         # Create the genesis block
         self.new_block(previous_hash='1', proof=100)
+
+        write_json(self.chain)
 
     def register_node(self, address):
         """
@@ -91,8 +103,10 @@ class Blockchain:
         # Replace our chain if we discovered a new, valid chain longer than ours
         if new_chain:
             self.chain = new_chain
+            write_json(self.chain)
             return True
 
+        write_json(self.chain)
         return False
 
     def resolve_transactions(self):
@@ -301,7 +315,7 @@ def explorer():
     if replaced:
         blockchain.current_transactions = []
     response = {
-        'chain': blockchain.chain,
+        'Blockchain': blockchain.chain,
         'length': len(blockchain.chain),
     }
     pretty = json.dumps(response, sort_keys=True, indent=2)
