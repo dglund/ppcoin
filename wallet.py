@@ -2,8 +2,8 @@ from uuid import uuid4
 import json
 
 class Wallet:
-
-    id = str(uuid4()).replace('-', '')
+    id = '860300418ae842b9842224be812d8883'
+    #id = str(uuid4()).replace('-', '')
     transaction = {
         'sender': '',
         'recipient': '',
@@ -11,16 +11,16 @@ class Wallet:
         'block_no': ''
     }
 
-wallet_data = {
-        Wallet.id: Wallet.transaction,
-    }
 
 def write_wallet(wallet_data):
     dump = json.dumps(wallet_data, indent=2, sort_keys=True)
     with open('wallet.json', 'w') as f:
         f.write(dump)
 
-# Pseudo-code
+
+transaction_list = []
+
+
 def wallet_entry(sender, recipient, amount, block_no):
     entry = {
         'sender': sender,
@@ -29,12 +29,27 @@ def wallet_entry(sender, recipient, amount, block_no):
         'block_no': block_no
     }
 
-    return entry
+    transaction_list.append(entry)
 
-transactions = []
 
-for block in chain.json:
-    if sender or recipient == Wallet.id:
-        transactions.append(wallet_entry(sender, recipient, amount, block_no))
+def update_wallet():
+    with open('chain.json') as f:
+        data = json.load(f)
+        chain = data['Blockchain']
+    for block in chain:
+        block_no = (block['index'])
+        transactions = block['transactions']
+        for transaction in transactions:
+            if transaction['recipient'] or transaction['sender'] == Wallet.id:
 
-write_wallet(transactions)
+                wallet_entry(
+                    transaction['sender'],
+                    transaction['recipient'],
+                    transaction['amount'],
+                    block_no
+                )
+
+
+update_wallet()
+frame = {Wallet.id: transaction_list}
+write_wallet(frame)
