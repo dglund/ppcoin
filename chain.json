@@ -4,40 +4,9 @@
       "index": 1,
       "previous_hash": "1",
       "proof": 100,
-      "timestamp": 1569242915.6014416,
+      "timestamp": 1569243057.3422687,
       "transactions": []
-    },
-    {
-      "index": 2,
-      "previous_hash": "e6a9f70b855c78a9ace99643bcf1495fc367af8833c558ef1d31c937a9d22b73",
-      "proof": 21108,
-      "timestamp": 1569242946.68299,
-      "transactions": [
-        {
-          "amount": 1,
-          "recipient": "11169abe5d714c5a98f6fd32b009eb15",
-          "sender": "0"
-        }
-      ]
-    },
-    {
-      "index": 3,
-      "previous_hash": "df42e86767e8749e5d3a1e6c0f61148a3dddeb3fb7cf31aab41bd493d7812514",
-      "proof": 12612,
-      "timestamp": 1569242981.301398,
-      "transactions": [
-        {
-          "amount": 3,
-          "recipient": "cailu",
-          "sender": "11169abe5d714c5a98f6fd32b009eb15"
-        },
-        {
-          "amount": 1,
-          "recipient": "11169abe5d714c5a98f6fd32b009eb15",
-          "sender": "0"
-        }
-      ]
     }
   ],
-  "length": 3
+  "length": 1
 }
