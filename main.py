@@ -244,7 +244,7 @@ blockchain = Blockchain()
 
 @app.context_processor  # Passes Git branch name to all templates for layout reasons
 def inject_version():
-    return dict(version=Repository('.').head.shorthand)
+    return dict(version=Repository('.').head.shorthand, node=node_identifier)
 
 
 @app.route('/mining', methods=['GET'])
