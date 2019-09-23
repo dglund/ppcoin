@@ -23,13 +23,20 @@ class Blockchain:
     def __init__(self):
         self.current_transactions = []
         self.chain = []
+        with open('chain.json') as f:
+            try:
+                data_file = json.load(f)
+                self.chain = data_file['Blockchain']
+            except ValueError:
+                self.new_block(previous_hash='1', proof=100)
+
 
         with open('network.json') as f:
             data = json.load(f)
         self.nodes = data['nodes']
 
         # Create the genesis block
-        self.new_block(previous_hash='1', proof=100)
+        #self.new_block(previous_hash='1', proof=100)
 
         write_json(self.chain)
 

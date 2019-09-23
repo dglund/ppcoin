@@ -3,7 +3,6 @@ import json
 
 class Wallet:
     id = '860300418ae842b9842224be812d8883'
-    #id = str(uuid4()).replace('-', '')
     transaction = {
         'sender': '',
         'recipient': '',
