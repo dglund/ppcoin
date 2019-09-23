@@ -1,12 +1,1 @@
-{
-  "Blockchain": [
-    {
-      "index": 1,
-      "previous_hash": "1",
-      "proof": 100,
-      "timestamp": 1569243057.3422687,
-      "transactions": []
-    }
-  ],
-  "length": 1
-}
+
