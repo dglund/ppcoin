@@ -6,7 +6,7 @@ from uuid import uuid4
 from pygit2 import Repository
 
 import requests
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request, render_template
 
 
 def write_json(value):
@@ -30,13 +30,9 @@ class Blockchain:
             except ValueError:
                 self.new_block(previous_hash='1', proof=100)
 
-
         with open('network.json') as f:
             data = json.load(f)
         self.nodes = data['nodes']
-
-        # Create the genesis block
-        #self.new_block(previous_hash='1', proof=100)
 
         write_json(self.chain)
 

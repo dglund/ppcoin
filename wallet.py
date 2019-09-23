@@ -1,6 +1,7 @@
 from uuid import uuid4
 import json
 
+
 class Wallet:
     id = '860300418ae842b9842224be812d8883'
     transaction = {
