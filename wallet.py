@@ -1,15 +1,7 @@
-from uuid import uuid4
 import json
 
 
-class Wallet:
-    id = '860300418ae842b9842224be812d8883'
-    transaction = {
-        'sender': '',
-        'recipient': '',
-        'amount': '',
-        'block_no': ''
-    }
+wallet_id = '39cf594f034b4fa982c18cbf72755cba'
 
 
 def write_wallet(wallet_data):
@@ -40,7 +32,7 @@ def update_wallet():
         block_no = (block['index'])
         transactions = block['transactions']
         for transaction in transactions:
-            if transaction['recipient'] or transaction['sender'] == Wallet.id:
+            if transaction['recipient'] == wallet_id or transaction['sender'] == wallet_id:
 
                 wallet_entry(
                     transaction['sender'],
@@ -51,5 +43,5 @@ def update_wallet():
 
 
 update_wallet()
-frame = {Wallet.id: transaction_list}
+frame = {wallet_id: transaction_list}
 write_wallet(frame)

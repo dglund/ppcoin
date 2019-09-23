@@ -8,6 +8,7 @@ import requests
 from flask import Flask, jsonify, request, render_template
 
 
+# Auto-creates chain.json and wallet.json if not in directory
 try:
     with open('chain.json'), open('wallet.json'):
         pass
@@ -17,6 +18,7 @@ except IOError:
         b.write('')
 
 
+# Function for writing to chain.json
 def write_json(value):
     chain_frame = {
         'Blockchain': value,
