@@ -4,9 +4,17 @@ from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
 from pygit2 import Repository
-
 import requests
 from flask import Flask, jsonify, request, render_template
+
+
+try:
+    with open('chain.json'), open('wallet.json'):
+        pass
+except IOError:
+    with open('chain.json', 'w') as a, open('wallet.json', 'w') as b:
+        a.write('')
+        b.write('')
 
 
 def write_json(value):
