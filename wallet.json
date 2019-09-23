@@ -1,22 +1,3 @@
 {
-  "860300418ae842b9842224be812d8883": [
-    {
-      "amount": 1,
-      "block_no": 2,
-      "recipient": "860300418ae842b9842224be812d8883",
-      "sender": "0"
-    },
-    {
-      "amount": 8,
-      "block_no": 3,
-      "recipient": "cailu",
-      "sender": "860300418ae842b9842224be812d8883"
-    },
-    {
-      "amount": 1,
-      "block_no": 3,
-      "recipient": "860300418ae842b9842224be812d8883",
-      "sender": "0"
-    }
-  ]
+  "860300418ae842b9842224be812d8883": []
 }
