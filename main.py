@@ -422,7 +422,9 @@ def render_home():
 
 @app.route('/generate')
 def generate_address():
-    return redirect('/transactions')
+    wallet.write_wallet(node_identifier, [])
+    return render_template('address.html', node=node_identifier)
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
