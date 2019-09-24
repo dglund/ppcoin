@@ -1,11 +1,9 @@
 import json
 
 
-#wallet_id = '39cf594f034b4fa982c18cbf72755cba'
-
-
 def write_wallet(wallet_id, transaction_data):
-    frame = {wallet_id: transaction_data}
+    transactions = {wallet_id: transaction_data}
+    frame = {'Transactions': transactions}
     dump = json.dumps(frame, indent=2, sort_keys=True)
     with open('wallet.json', 'w') as f:
         f.write(dump)
@@ -15,6 +13,7 @@ transaction_list = []
 
 
 def wallet_entry(sender, recipient, amount, block_no):
+
     entry = {
         'sender': sender,
         'recipient': recipient,

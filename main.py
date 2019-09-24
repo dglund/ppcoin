@@ -30,9 +30,12 @@ def write_json(value):
         f.write(dump)
 
 
-def update_wallet():
+def run_wallet():
     wallet.update_wallet(node_identifier)
-    wallet.write_wallet(node_identifier, wallet.transaction_list)
+    if not wallet.transaction_list:
+        pass
+    else:
+        wallet.write_wallet(node_identifier, wallet.transaction_list)
 
 
 class Blockchain:
@@ -278,6 +281,7 @@ def mine():
     previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
+
     response = {
         'message': "New Block Forged",
         'index': block['index'],
@@ -286,12 +290,16 @@ def mine():
         'previous_hash': block['previous_hash'],
     }
     pretty = json.dumps(response, sort_keys=True, indent=2)
+
+    write_json(blockchain.chain)
+    run_wallet()
+
     return render_template('response.html', response=pretty)
 
 
 @app.route('/transactions', methods=['GET'])
 def render_transactions():
-    update_wallet()
+
     replaced = blockchain.resolve_conflicts()
     if replaced:
         blockchain.current_transactions = []
@@ -396,9 +404,14 @@ def consensus():
 
 @app.route('/wallet')
 def render_wallet():
-    update_wallet()
-    with open('wallet.json') as f:
-        context = json.load(f)
+    run_wallet()
+
+    try:
+        with open('wallet.json') as f:
+            context = json.load(f)
+    except ValueError:
+        context = ''
+
     return render_template('wallet.html', wallet_data=context)
 
 
