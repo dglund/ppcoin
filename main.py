@@ -5,7 +5,8 @@ from urllib.parse import urlparse
 from uuid import uuid4
 from pygit2 import Repository
 import requests
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect
+import wallet
 
 
 # Auto-creates chain.json and wallet.json if not in directory
@@ -27,6 +28,11 @@ def write_json(value):
     dump = json.dumps(chain_frame, indent=2, sort_keys=True)
     with open('chain.json', 'w') as f:
         f.write(dump)
+
+
+def update_wallet():
+    wallet.update_wallet(node_identifier)
+    wallet.write_wallet(node_identifier, wallet.transaction_list)
 
 
 class Blockchain:
@@ -285,6 +291,7 @@ def mine():
 
 @app.route('/transactions', methods=['GET'])
 def render_transactions():
+    update_wallet()
     replaced = blockchain.resolve_conflicts()
     if replaced:
         blockchain.current_transactions = []
@@ -385,6 +392,14 @@ def consensus():
         }
 
     return jsonify(response), 200
+
+
+@app.route('/wallet')
+def render_wallet():
+    update_wallet()
+    with open('wallet.json') as f:
+        context = json.load(f)
+    return render_template('wallet.html', wallet_data=context)
 
 
 @app.route('/')
