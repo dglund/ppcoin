@@ -5,12 +5,18 @@ transaction_list = []
 
 
 def write_wallet(wallet_id, transaction_data):
-
-    transactions = {wallet_id: transaction_data}
-    #frame = {'Transactions': transactions}
-    dump = json.dumps(transactions, indent=2, sort_keys=True)
-    with open('wallet.json', 'w') as f:
-        f.write(dump)
+    try:
+        with open('wallet.json') as f:
+            data = json.load(f)
+            data[wallet_id] = transaction_data
+            dump = json.dumps(data, indent=2, sort_keys=True)
+            with open('wallet.json', 'w') as f:
+                f.write(dump)
+    except ValueError:
+        data = {wallet_id: transaction_data}
+        dump = json.dumps(data, indent=2, sort_keys=True)
+        with open('wallet.json', 'w') as f:
+            f.write(dump)
 
 
 def wallet_entry(sender, recipient, amount, block_no):
