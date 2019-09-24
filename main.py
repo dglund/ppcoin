@@ -36,6 +36,7 @@ def run_wallet():
         pass
     else:
         wallet.write_wallet(node_identifier, wallet.transaction_list)
+        wallet.transaction_list = []
 
 
 class Blockchain:
@@ -281,7 +282,6 @@ def mine():
     previous_hash = blockchain.hash(last_block)
     block = blockchain.new_block(proof, previous_hash)
 
-
     response = {
         'message': "New Block Forged",
         'index': block['index'],
@@ -408,7 +408,8 @@ def render_wallet():
 
     try:
         with open('wallet.json') as f:
-            context = json.load(f)
+            data = json.load(f)
+            context = json.dumps(data, indent=2, sort_keys=True)
     except ValueError:
         context = ''
 
