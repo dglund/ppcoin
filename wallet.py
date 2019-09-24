@@ -3,10 +3,12 @@ import json
 
 transaction_list = []
 
+
 def write_wallet(wallet_id, transaction_data):
+
     transactions = {wallet_id: transaction_data}
-    frame = {'Transactions': transactions}
-    dump = json.dumps(frame, indent=2, sort_keys=True)
+    #frame = {'Transactions': transactions}
+    dump = json.dumps(transactions, indent=2, sort_keys=True)
     with open('wallet.json', 'w') as f:
         f.write(dump)
 
