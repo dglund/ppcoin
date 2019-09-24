@@ -409,7 +409,7 @@ def render_wallet():
     try:
         with open('wallet.json') as f:
             data = json.load(f)
-            context = json.dumps(data, indent=2, sort_keys=True)
+            context = json.dumps(data, indent=2, sort_keys=False)
     except ValueError:
         context = ''
 

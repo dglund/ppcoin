@@ -9,12 +9,12 @@ def write_wallet(wallet_id, transaction_data):
         with open('wallet.json') as f:
             data = json.load(f)
             data[wallet_id] = transaction_data
-            dump = json.dumps(data, indent=2, sort_keys=True)
+            dump = json.dumps(data, indent=2, sort_keys=False)
             with open('wallet.json', 'w') as f:
                 f.write(dump)
     except ValueError:
         data = {wallet_id: transaction_data}
-        dump = json.dumps(data, indent=2, sort_keys=True)
+        dump = json.dumps(data, indent=2, sort_keys=False)
         with open('wallet.json', 'w') as f:
             f.write(dump)
 
