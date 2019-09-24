@@ -3,12 +3,17 @@
 {{ super() }}
 {% endblock %}
 {% block content %}
-    Create Transaction
-
+    <b>Send coins</b><br>
     <form action="/transactions/new" method="POST">
         Recipient wallet: <input type="text" name="recipient" value=""><br>
         Amount: <input type="text" name="amount" value=""><br>
         <input type="submit" class="submit" value="Submit">
     </form>
-    {{ context }}
+    <b>Recieve coins</b><br>
+    <a href="/generate" class="button">Generate address</a><br><br>
+
+    <b>Transactions in pool</b><br>
+    {% for i in context %}
+        {{ i }} <br>
+    {% endfor %}
 {% endblock %}

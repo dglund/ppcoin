@@ -420,6 +420,9 @@ def render_wallet():
 def render_home():
     return render_template('home.html')
 
+@app.route('/generate')
+def generate_address():
+    return redirect('/transactions')
 
 if __name__ == '__main__':
     from argparse import ArgumentParser
