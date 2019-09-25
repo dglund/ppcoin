@@ -4,19 +4,57 @@ from time import time
 from urllib.parse import urlparse
 from uuid import uuid4
 from pygit2 import Repository
-
 import requests
-from flask import Flask, jsonify, request, render_template, redirect, url_for
+from flask import Flask, jsonify, request, render_template, redirect
+import wallet
+
+
+# Auto-creates chain.json and wallet.json if not in directory
+try:
+    with open('chain.json'), open('wallet.json'):
+        pass
+except IOError:
+    with open('chain.json', 'w') as a, open('wallet.json', 'w') as b:
+        a.write('')
+        b.write('')
+
+
+# Function for writing to chain.json
+def write_json(value):
+    chain_frame = {
+        'Blockchain': value,
+        'length': len(value),
+    }
+    dump = json.dumps(chain_frame, indent=2, sort_keys=True)
+    with open('chain.json', 'w') as f:
+        f.write(dump)
+
+
+def run_wallet():
+    wallet.update_wallet(node_identifier)
+    if not wallet.transaction_list:
+        pass
+    else:
+        wallet.write_wallet(node_identifier, wallet.transaction_list)
+        wallet.transaction_list = []
 
 
 class Blockchain:
     def __init__(self):
         self.current_transactions = []
         self.chain = []
-        self.nodes = set()
+        with open('chain.json') as f:
+            try:
+                data_file = json.load(f)
+                self.chain = data_file['Blockchain']
+            except ValueError:
+                self.new_block(previous_hash='1', proof=100)
 
-        # Create the genesis block
-        self.new_block(previous_hash='1', proof=100)
+        with open('network.json') as f:
+            data = json.load(f)
+        self.nodes = data['nodes']
+
+        write_json(self.chain)
 
     def register_node(self, address):
         """
@@ -77,22 +115,28 @@ class Blockchain:
         
         # Grab and verify the chains from all the nodes in our network
         for node in neighbours:
-            response = requests.get(f'http://{node}/chain')
+            try:
+                response = requests.get(f'http://{node}/chain')
 
-            if response.status_code == 200:
-                length = response.json()['length']
-                chain = response.json()['chain']
+                if response.status_code == 200:
+                    length = response.json()['length']
+                    chain = response.json()['chain']
 
-                # Check if the length is longer and the chain is valid
-                if length > max_length and self.valid_chain(chain):
-                    max_length = length
-                    new_chain = chain
+                    # Check if the length is longer and the chain is valid
+                    if length > max_length and self.valid_chain(chain):
+                        max_length = length
+                        new_chain = chain
+
+            except requests.exceptions.RequestException:
+                pass
 
         # Replace our chain if we discovered a new, valid chain longer than ours
         if new_chain:
             self.chain = new_chain
+            write_json(self.chain)
             return True
 
+        write_json(self.chain)
         return False
 
     def resolve_transactions(self):
@@ -100,10 +144,14 @@ class Blockchain:
         global_list = []
 
         for node in neighbours:
-            response = requests.get(f'http://{node}/transaction_list')
-            json_response = response.json()
-            for item in json_response:
-                global_list.append(item)
+            try:
+                response = requests.get(f'http://{node}/transaction_list')
+                json_response = response.json()
+                for item in json_response:
+                    global_list.append(item)
+
+            except requests.exceptions.RequestException:
+                pass
 
         blockchain.current_transactions = global_list
 
@@ -206,7 +254,7 @@ blockchain = Blockchain()
 
 @app.context_processor  # Passes Git branch name to all templates for layout reasons
 def inject_version():
-    return dict(version=Repository('.').head.shorthand)
+    return dict(version=Repository('.').head.shorthand, node=node_identifier)
 
 
 @app.route('/mining', methods=['GET'])
@@ -242,17 +290,25 @@ def mine():
         'previous_hash': block['previous_hash'],
     }
     pretty = json.dumps(response, sort_keys=True, indent=2)
+
+    write_json(blockchain.chain)
+    run_wallet()
+
     return render_template('response.html', response=pretty)
 
 
 @app.route('/transactions', methods=['GET'])
 def render_transactions():
+
     replaced = blockchain.resolve_conflicts()
     if replaced:
         blockchain.current_transactions = []
 
     list_transactions = blockchain.current_transactions
-    return render_template('transactions.html', context=list_transactions)
+
+    balance = wallet.wallet_balance()
+
+    return render_template('transactions.html', context=list_transactions, wallet_balance=balance)
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -266,17 +322,17 @@ def new_transaction():
         'amount': int(request.form['amount'])
     }
 
-    # Check that the required fields are in the POST'ed data
-    required = ['sender', 'recipient', 'amount']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+    if int(request.form['amount']) > wallet.wallet_balance():
+        response = 'Insufficient funds'
+        return render_template('response.html', response=response)
 
-    # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    else:
+        # Create a new Transaction
+        index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    response = 'Transaction will be added to Block ' + str(index)
+        response = 'Transaction will be added to Block ' + str(index)
 
-    return render_template('response.html', response=response)
+        return render_template('response.html', response=response)
 
 
 @app.route('/chain', methods=['GET'])
@@ -301,7 +357,7 @@ def explorer():
     if replaced:
         blockchain.current_transactions = []
     response = {
-        'chain': blockchain.chain,
+        'Blockchain': blockchain.chain,
         'length': len(blockchain.chain),
     }
     pretty = json.dumps(response, sort_keys=True, indent=2)
@@ -349,9 +405,31 @@ def consensus():
     return jsonify(response), 200
 
 
+@app.route('/wallet')
+def render_wallet():
+    run_wallet()
+
+    try:
+        with open('wallet.json') as f:
+            data = json.load(f)
+            context = json.dumps(data, indent=2, sort_keys=False)
+    except ValueError:
+        context = ''
+
+    balance = wallet.wallet_balance()
+
+    return render_template('wallet.html', wallet_data=context, wallet_balance=balance)
+
+
 @app.route('/')
 def render_home():
     return render_template('home.html')
+
+
+@app.route('/generate')
+def generate_address():
+    wallet.write_wallet(node_identifier, [])
+    return render_template('address.html', node=node_identifier)
 
 
 if __name__ == '__main__':
