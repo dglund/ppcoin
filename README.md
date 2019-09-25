@@ -1,7 +1,10 @@
-### VanFlymenCoin
-##### Experimental API + GUI based on Van Flymen's python blockchain
+### ppCoin
+##### Experimental blockchain API + GUI 
 
-https://medium.com/@vanflymen/learn-blockchains-by-building-one-117428612f46
+Ver. 0.1.*
 
-https://github.com/dvf/blockchain
+Based on:
+<https://medium.com/@vanflymen/learn-blockchains-by-building-one-117428612f46>
+
+<https://github.com/dvf/blockchain>
 
