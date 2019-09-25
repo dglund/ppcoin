@@ -47,3 +47,26 @@ def update_wallet(wallet_id):
                     transaction['amount'],
                     block_no
                 )
+
+
+def wallet_balance():
+    with open('wallet.json', 'r') as f:
+        data = json.load(f)
+    address_list = []
+    for address in data:
+        address_list.append(address)
+
+    outgoing = 0
+    incoming = 0
+
+    for i in range(len(address_list)):
+
+        for transaction in data[address_list[i]]:
+            if transaction['sender'] == address_list[i]:
+                outgoing += transaction['amount']
+            elif transaction['recipient'] == address_list[i]:
+                incoming += transaction['amount']
+
+    balance = incoming - outgoing
+    return balance
+

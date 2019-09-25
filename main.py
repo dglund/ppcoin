@@ -305,7 +305,10 @@ def render_transactions():
         blockchain.current_transactions = []
 
     list_transactions = blockchain.current_transactions
-    return render_template('transactions.html', context=list_transactions)
+
+    balance = wallet.wallet_balance()
+
+    return render_template('transactions.html', context=list_transactions, wallet_balance=balance)
 
 
 @app.route('/transactions/new', methods=['POST'])
@@ -319,17 +322,17 @@ def new_transaction():
         'amount': int(request.form['amount'])
     }
 
-    # Check that the required fields are in the POST'ed data
-    required = ['sender', 'recipient', 'amount']
-    if not all(k in values for k in required):
-        return 'Missing values', 400
+    if int(request.form['amount']) > wallet.wallet_balance():
+        response = 'Insufficient funds'
+        return render_template('response.html', response=response)
 
-    # Create a new Transaction
-    index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
+    else:
+        # Create a new Transaction
+        index = blockchain.new_transaction(values['sender'], values['recipient'], values['amount'])
 
-    response = 'Transaction will be added to Block ' + str(index)
+        response = 'Transaction will be added to Block ' + str(index)
 
-    return render_template('response.html', response=response)
+        return render_template('response.html', response=response)
 
 
 @app.route('/chain', methods=['GET'])
@@ -413,12 +416,15 @@ def render_wallet():
     except ValueError:
         context = ''
 
-    return render_template('wallet.html', wallet_data=context)
+    balance = wallet.wallet_balance()
+
+    return render_template('wallet.html', wallet_data=context, wallet_balance=balance)
 
 
 @app.route('/')
 def render_home():
     return render_template('home.html')
+
 
 @app.route('/generate')
 def generate_address():
