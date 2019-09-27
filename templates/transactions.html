@@ -3,13 +3,26 @@
 {{ super() }}
 {% endblock %}
 {% block content %}
+
     <b>Wallet balance:</b> {{ wallet_balance }} ppCoin<br><br>
+
     <b>Send coins</b><br>
     <form action="/transactions/new" method="POST">
-        Recipient wallet: <input type="text" name="recipient" value=""><br>
-        Amount: <input type="text" name="amount" value=""><br>
-        <input type="submit" class="submit" value="Submit">
+    <table>
+        <tr>
+            <td>Recipient wallet: </td>
+            <td><input type="text" name="recipient" value=""></td>
+        </tr>
+        <tr>
+            <td>Amount: </td>
+            <td><input type="text" name="amount" value=""></td>
+        </tr>
+        <tr>
+            <td><input type="submit" class="submit" value="Submit"></td>
+        </tr>
+    </table>
     </form>
+
     <b>Recieve coins</b><br>
     <a href="/generate" class="dynbutton">Generate address</a><br><br>
 
