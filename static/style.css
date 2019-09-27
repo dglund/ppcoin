@@ -73,6 +73,15 @@ body {
     color: white;
 }
 
+.table-header {
+    background-color: #3f5061;
+    padding: 5px;
+}
+
+.content-container {
+    display: inline-block;
+}
+
 .footer {
     margin: auto;
     background-color: #58616b;

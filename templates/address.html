@@ -3,7 +3,21 @@
 {{ super() }}
 {% endblock %}
 {% block content %}
-<b>Puclic address: </b>
-<pre>{{ node }}</pre>
+<div class="content-container">
+    <table>
+        <tr>
+            <td>
+                <div class="table-header">
+                    <b>Public address</b>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <pre>{{ node }}</pre>
+            </td>
+        </tr>
+    </table>
+</div>
 
 {% endblock %}
