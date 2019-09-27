@@ -18,10 +18,11 @@ body {
     background-color: #8f8f8f;
 }
 #first {
-    width: 650px;
+    width: 640px;
     float: left;
     min-height: 300px;
     background-color: #435a70;
+    padding: 5px;
 }
 #second {
     width: 300px;
@@ -51,6 +52,34 @@ body {
 .button:hover {
     background-color: #6e5b5b;
     color: white;
+}
+
+.dynbutton {
+    background-color: #806a6a;
+    border: none;
+    color: #eaeaea;
+    text-align: auto;
+    padding: 7px 32px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 0px 0px;
+    cursor: pointer;
+    border-radius: 6px;
+}
+
+.dynbutton:hover {
+    background-color: #6e5b5b;
+    color: white;
+}
+
+.table-header {
+    background-color: #3f5061;
+    padding: 5px;
+}
+
+.content-container {
+    display: inline-block;
 }
 
 .footer {
