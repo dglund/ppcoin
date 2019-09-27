@@ -4,9 +4,11 @@
 {% endblock %}
 {% block content %}
 
-    <b>Wallet balance:</b> {{ wallet_balance }} ppCoin<br><br>
+    <b>Wallet balance:</b> <i>{{ wallet_balance }}</i> <font size="2">ppCoin</font>
+    <br><br>
 
-    <b>Send coins</b><br>
+    <b>Send coins</b>
+    <br>
     <form action="/transactions/new" method="POST">
     <table>
         <tr>
@@ -24,10 +26,13 @@
     </form>
 
     <b>Recieve coins</b><br>
-    <a href="/generate" class="dynbutton">Generate address</a><br><br>
-
-    <b>Transactions in pool</b><br>
+    <a href="/generate" class="dynbutton">Generate address</a>
+    <br>
+    <br>
+    <b>Transactions in pool</b>
+    <br>
     {% for i in context %}
-        {{ i }} <br>
+        {{ i }}
+    <br>
     {% endfor %}
 {% endblock %}
